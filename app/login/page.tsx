@@ -1,25 +1,32 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { auth } from "../../lib/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithEmailAndPassword,sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage () {
     const router = useRouter();
+    const [user] = useAuthState(auth);
+  
 
     const [email,setEmail ] = useState("");
     const [password,setPassword] = useState("");
     const [error,setError] = useState("");
     const [message,setMessage] = useState("");
 
+    
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try{
             await signInWithEmailAndPassword(auth,email,password);
             router.push("/profile")
+            console.log("login success");
         } catch (err: any){
             console.error(err);
+            
             setError("Login Failed.Please check your email and password.");
         }
     };
@@ -40,6 +47,7 @@ export default function LoginPage () {
         }
     };
 
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
         <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-96 space-y-4">
@@ -58,7 +66,7 @@ export default function LoginPage () {
             type="password"
             placeholder="Password"
             className="w-full text-slate-900 text-sm border border-slate-300 px-4 py-3 pr-8 rounded-md outline-blue-600"
-            value={email}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
         />
         <div className="text-sm">
@@ -71,7 +79,9 @@ export default function LoginPage () {
             </button>
         </div>
         <div className="!mt-12">
-            <button type="submit" className="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer">
+            <button 
+            type="submit" 
+            className="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer">
                 Login
             </button>
         </div>

@@ -1,5 +1,11 @@
+'use client'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { auth } from "../lib/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
+
+
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', current: true },
@@ -14,6 +20,16 @@ function classNames(...classes) {
 
 
 export default function Home() {
+    const router = useRouter();
+    const [user] = useAuthState(auth);
+
+
+  const handleLogout = async () => {
+    await auth.signOut();
+    console.log("User Logged out!")
+    router.push("/login");
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-9xl px-2 sm:px-6 lg:px-8">
@@ -53,14 +69,14 @@ export default function Home() {
             </div>
           </div>
       <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-        <button
+        {/* <button
         type="button"
         className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
         >
           <span className="absolute -inset-0.5"/>
           <span className="sr-only">View Notifications</span>
           <BellIcon aria-hidden="true" className="size-6"/>
-        </button>
+        </button> */}
       <Menu as="div" className="relative ml-3">
         <div>
           <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800">
@@ -79,7 +95,7 @@ export default function Home() {
           >
             <MenuItem>
              <a
-                    href="#"
+                    href="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Your Profile
@@ -95,12 +111,12 @@ export default function Home() {
                   </a>
             </MenuItem>
              <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                  <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    Sign out
-                  </a>
+                    Sign Out
+                  </button>
              </MenuItem>
           </MenuItems>
       </Menu>
