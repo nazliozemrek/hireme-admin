@@ -4,6 +4,7 @@ import { Bars3Icon,XMarkIcon } from '@heroicons/react/24/outline';
 import { auth } from "../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 
 
@@ -23,6 +24,22 @@ export default function NavBar() {
     const router = useRouter();
     const [user] = useAuthState(auth);
 
+
+
+useEffect(() => {
+    if(!user){
+        router.push("/login") // This is a side effect
+    }
+   
+},[user])    
+
+ if ( user === undefined) return null; // Stop rendering while Firebase is loading
+
+ if(!user) return null; // Final Gate
+
+ 
+     
+      
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -80,7 +97,8 @@ export default function NavBar() {
         </button> */}
       <Menu as="div" className="relative ml-3">
         <div>
-          <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800">
+    
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800">
             <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img
@@ -89,6 +107,8 @@ export default function NavBar() {
                     className="size-8 rounded-full"
                   />
           </MenuButton>
+                
+
         </div>
         <MenuItems
           transition
