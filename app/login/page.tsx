@@ -5,6 +5,7 @@ import { auth } from "../../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithEmailAndPassword,sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { ensureUserDoc } from "@/lib/userUtils";
 
 export default function LoginPage () {
     const router = useRouter();
@@ -22,6 +23,11 @@ export default function LoginPage () {
         e.preventDefault();
         try{
             await signInWithEmailAndPassword(auth,email,password);
+            const user = auth.currentUser;
+            if(!user){
+                throw new Error("User is not authenticated.")
+            }
+            await ensureUserDoc(user);
             router.push("/profile")
             console.log("login success");
         } catch (err: any){
